@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fireman Burger — Sistema</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800;900&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #D41C1C;
+  --red-glow: rgba(212,28,28,0.35);
+  --gold: #C8902A;
+  --bg: #0D0D0D;
+  --surface: #131313;
+  --surface2: #1b1b1b;
+  --border: rgba(255,255,255,0.07);
+  --border-mid: rgba(255,255,255,0.12);
+  --text: #EDE8E2;
+  --text-2: #8A7F78;
+  --text-3: #4C4542;
+  --metal: repeating-linear-gradient(135deg,transparent,transparent 3px,rgba(255,255,255,.008) 3px,rgba(255,255,255,.008) 6px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.hdr {
+  height: 64px;
+  background: var(--bg);
+  background-image: repeating-linear-gradient(90deg,transparent,transparent 12px,rgba(255,255,255,.004) 12px,rgba(255,255,255,.004) 13px);
+  border-bottom: 2px solid var(--red);
+  box-shadow: 0 2px 28px var(--red-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0 20px;
+}
+.logo-fire {
+  width: 36px; height: 36px;
+  background: var(--red);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 16px rgba(212,28,28,0.5);
+  flex-shrink: 0;
+}
+.logo-words { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 22px;
+  letter-spacing: 2.5px; text-transform: uppercase; color: var(--text);
+}
+.logo-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold);
+}
+
+/* HERO */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  gap: 12px;
+  text-align: center;
+}
+.hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+.hero-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 38px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: var(--text);
+}
+.hero-title span { color: var(--red); }
+.hero-divider {
+  width: 48px; height: 2px;
+  background: var(--red);
+  margin: 8px auto;
+  box-shadow: 0 0 12px var(--red-glow);
+}
+
+/* MÓDULOS */
+.modulos {
+  padding: 0 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+.modulo-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  background-image: var(--metal);
+  border: 1px solid var(--border-mid);
+  border-radius: 4px;
+  padding: 18px 20px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.modulo-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+}
+.modulo-card.estoque::before { background: var(--gold); box-shadow: 2px 0 12px rgba(200,144,42,0.4); }
+.modulo-card.fichas::before { background: var(--red); box-shadow: 2px 0 12px rgba(212,28,28,0.5); }
+.modulo-card.checklist::before { background: #22c55e; box-shadow: 2px 0 12px rgba(34,197,94,0.4); }
+.modulo-card:hover { border-color: rgba(255,255,255,0.22); transform: translateX(2px); }
+.modulo-card:active { transform: scale(0.98); }
+
+.modulo-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  width: 48px; height: 48px;
+  background: var(--surface2);
+  border: 1px solid var(--border-mid);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.modulo-info { flex: 1; min-width: 0; }
+.modulo-nome {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.modulo-desc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.5px;
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+.modulo-arrow {
+  font-size: 18px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+/* FOOTER */
+.footer {
+  padding: 16px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.footer span { color: var(--red); }
+
+/* RELÓGIO */
+.hdr-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-3);
+  letter-spacing: 2px;
+  margin-left: auto;
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo-fire">🔥</div>
+  <div class="logo-words">
+    <div class="logo-brand">Fireman Burger</div>
+    <div class="logo-sub">· Artesanal ·</div>
+  </div>
+  <div class="hdr-time" id="relogio">--:--</div>
+</div>
+
+<div class="hero">
+  <div class="hero-label">Central de operações</div>
+  <div class="hero-title">Sistema de<br><span>Gestão</span></div>
+  <div class="hero-divider"></div>
+</div>
+
+<div class="modulos">
+  <a class="modulo-card estoque" href="Fireman_Estoque.html">
+    <div class="modulo-icon">📦</div>
+    <div class="modulo-info">
+      <div class="modulo-nome">Estoque</div>
+      <div class="modulo-desc">Controle de insumos · movimentações</div>
+    </div>
+    <div class="modulo-arrow">›</div>
+  </a>
+
+  <a class="modulo-card fichas" href="Fireman_Fichas.html" onclick="window.location.href='Fireman_Fichas.html';return false;">
+    <div class="modulo-icon">📋</div>
+    <div class="modulo-info">
+      <div class="modulo-nome">Fichas Técnicas</div>
+      <div class="modulo-desc">Receitas · CMV · margem de lucro</div>
+    </div>
+    <div class="modulo-arrow">›</div>
+  </a>
+
+  <a class="modulo-card checklist" href="Fireman_Checklist.html">
+    <div class="modulo-icon">☑️</div>
+    <div class="modulo-info">
+      <div class="modulo-nome">Checklist</div>
+      <div class="modulo-desc">Abertura · fechamento · limpeza</div>
+    </div>
+    <div class="modulo-arrow">›</div>
+  </a>
+</div>
+
+<div class="footer">
+  Fireman Burger <span>·</span> Artesanal <span>·</span> Salvador BA
+</div>
+
+<script>
+function tick() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('relogio').textContent = h + ':' + m;
+}
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
