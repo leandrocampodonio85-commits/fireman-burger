@@ -382,6 +382,13 @@ body{
   text-transform:uppercase;cursor:pointer;margin-bottom:14px;transition:all .2s;
 }
 .btn-outline:hover{background:rgba(200,144,42,.08);border-color:rgba(200,144,42,.65)}
+.btn-danger{
+  width:100%;background:transparent;color:var(--red);
+  border:1px solid rgba(212,28,28,.4);padding:14px;border-radius:3px;
+  font-family:var(--font-d);font-size:13px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;margin-top:10px;transition:all .2s;
+}
+.btn-danger:hover{background:rgba(212,28,28,.08);border-color:rgba(212,28,28,.7)}
 
 .collapsible{display:none}
 .collapsible.open{display:block}
@@ -664,6 +671,13 @@ body{
 <div class="modal-overlay" id="modalEdit" onclick="if(event.target===this) fecharModalEdit()">
   <div class="modal-box">
     <div class="modal-title" id="modalEditTitulo">Editar <em>item</em></div>
+    <div class="campo"><label>Quantidade em estoque</label>
+      <div class="qty-stepper">
+        <div class="qty-btn" onclick="stepEditQtd(-1)">−</div>
+        <input type="number" id="eQtd" min="0" step="0.01">
+        <div class="qty-btn" onclick="stepEditQtd(1)">+</div>
+      </div>
+    </div>
     <div class="campo-row">
       <div class="campo"><label>Custo unit. (R$)</label>
         <input type="number" id="eCusto" min="0" step="0.01">
@@ -676,6 +690,7 @@ body{
       <input type="text" id="eForn" placeholder="Nome do fornecedor">
     </div>
     <button class="btn-primary" id="btnEdit" onclick="salvarEdicaoItem()">Salvar</button>
+    <button class="btn-danger" id="btnDelItem" onclick="excluirItem()">🗑️ Excluir item</button>
   </div>
 </div>
 
@@ -817,6 +832,7 @@ function abrirEdicaoItem(id) {
   if (!it) return;
   editItemId = id;
   document.getElementById('modalEditTitulo').innerHTML = `Editar <em>${it.nome}</em>`;
+  document.getElementById('eQtd').value   = parseFloat(it.quantidade) || 0;
   document.getElementById('eCusto').value = parseFloat(it.custo_unitario) || 0;
   document.getElementById('eMin').value   = parseFloat(it.estoque_minimo) || 0;
   document.getElementById('eForn').value  = it.fornecedor || '';
@@ -834,6 +850,7 @@ async function salvarEdicaoItem() {
     const r = await req(`estoque?id=eq.${editItemId}`, {
       method:'PATCH',
       body: JSON.stringify({
+        quantidade: parseFloat(document.getElementById('eQtd').value) || 0,
         custo_unitario: parseFloat(document.getElementById('eCusto').value) || 0,
         estoque_minimo: parseFloat(document.getElementById('eMin').value) || 0,
         fornecedor: document.getElementById('eForn').value.trim() || null,
@@ -845,6 +862,25 @@ async function salvarEdicaoItem() {
     await load();
   } catch (e) { toast('Erro ao salvar: '+e.message,'err'); }
   finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+}
+
+async function excluirItem() {
+  if (!editItemId) return;
+  const it = cache.find(i => i.id === editItemId);
+  if (!confirm(`Excluir "${it ? it.nome : 'este item'}" do estoque? Essa ação não pode ser desfeita.`)) return;
+  const btn = document.getElementById('btnDelItem');
+  btn.disabled = true; btn.textContent = 'Excluindo…';
+  try {
+    const r = await req('rpc/excluir_item_estoque', {
+      method:'POST',
+      body: JSON.stringify({ item_id_param: editItemId })
+    });
+    if (!r.ok) throw new Error('status '+r.status);
+    toast('✓ Item excluído!');
+    fecharModalEdit();
+    await load();
+  } catch (e) { toast('Erro ao excluir: '+e.message,'err'); }
+  finally { btn.disabled = false; btn.textContent = '🗑️ Excluir item'; }
 }
 
 function renderAlerts() {
@@ -877,6 +913,12 @@ function preencherSelect() {
 
 function stepQtd(delta) {
   const el  = document.getElementById('mQtd');
+  const val = (parseFloat(el.value) || 0) + delta;
+  el.value = Math.max(0, Math.round(val * 100) / 100);
+}
+
+function stepEditQtd(delta) {
+  const el  = document.getElementById('eQtd');
   const val = (parseFloat(el.value) || 0) + delta;
   el.value = Math.max(0, Math.round(val * 100) / 100);
 }
