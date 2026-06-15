@@ -55,6 +55,8 @@ body{
 }
 .hdr-logo{display:flex;align-items:center;gap:11px;flex:1;min-width:0}
 .hdr-logo svg{flex-shrink:0}
+.hdr-logo-img{flex-shrink:0;width:40px;height:40px;border-radius:8px;object-fit:cover;box-shadow:0 0 14px rgba(212,28,28,.4)}
+
 .logo-words{display:flex;flex-direction:column;line-height:1.1}
 .logo-brand{
   font-family:var(--font-d);font-weight:800;font-size:21px;
@@ -157,6 +159,17 @@ body{
 }
 .qty-stepper input::-webkit-outer-spin-button,
 .qty-stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+/* ── BOTÃO VOLTAR ── */
+.back-row{display:flex;justify-content:flex-end;padding:12px 14px 0}
+.btn-back{
+  display:flex;align-items:center;gap:6px;
+  background:#FF7A1A;border:none;color:#1a1100;
+  font-family:var(--font-d);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  padding:12px 22px;border-radius:4px;cursor:pointer;
+  box-shadow:0 3px 14px rgba(255,122,26,.4);
+}
+.btn-back:active{filter:brightness(.88)}
 
 /* ── VALOR TOTAL EM ESTOQUE ── */
 .value-banner{
@@ -429,19 +442,7 @@ body{
 <!-- ══ HEADER ══ -->
 <header class="hdr">
   <div class="hdr-logo">
-    <svg width="40" height="45" viewBox="0 0 90 100" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-      <line x1="16" y1="88" x2="74" y2="12" stroke="white" stroke-width="9" stroke-linecap="round"/>
-      <line x1="74" y1="88" x2="16" y2="12" stroke="white" stroke-width="9" stroke-linecap="round"/>
-      <path d="M74,10 C84,2 95,10 91,23 L76,16 Z" fill="white"/>
-      <path d="M16,10 C6,2 -5,10 -1,23 L14,16 Z" fill="white"/>
-      <circle cx="14" cy="88" r="7" fill="white"/>
-      <circle cx="76" cy="88" r="7" fill="white"/>
-      <path d="M37,57 C35,49 38.5,43 40,36 C39,42 41.5,39 42.5,32 C43.5,39 46,42 45,36 C47,43 50.5,49 48,57Z" fill="white"/>
-      <ellipse cx="44" cy="61" rx="15" ry="7" fill="white"/>
-      <rect x="29" y="61" width="30" height="4" rx="1" fill="white"/>
-      <rect x="29" y="65" width="30" height="5" rx="1" fill="white"/>
-      <path d="M29,70 L59,70 Q59,81 44,81 Q29,81 29,70Z" fill="white"/>
-    </svg>
+    <img src="logo.jpg" alt="Fireman Burger" class="hdr-logo-img">
     <div class="logo-words">
       <span class="logo-brand">Fireman Burger</span>
       <span class="logo-mod">Controle de Estoque</span>
@@ -466,6 +467,8 @@ body{
 
   <!-- ── TELA: ESTOQUE ── -->
   <div id="screen-estoque" class="screen active">
+
+    <div class="back-row"><button class="btn-back" onclick="history.back()">← Voltar</button></div>
 
     <div class="stats-board">
       <div class="stat-cell">
@@ -505,6 +508,7 @@ body{
 
   <!-- ── TELA: MOVIMENTAR ── -->
   <div id="screen-mov" class="screen">
+    <div class="back-row"><button class="btn-back" onclick="showScreen('estoque')">← Voltar</button></div>
     <div class="form-wrap">
       <div class="form-box">
         <div class="form-title">Registrar <em>movimentação</em></div>
@@ -540,6 +544,7 @@ body{
 
   <!-- ── TELA: NOVO ITEM ── -->
   <div id="screen-novo" class="screen">
+    <div class="back-row"><button class="btn-back" onclick="showScreen('estoque')">← Voltar</button></div>
     <div class="form-wrap" style="padding-bottom:0">
       <button class="btn-outline" onclick="toggleForm()">＋ Novo item no estoque</button>
     </div>
@@ -595,6 +600,7 @@ body{
 
   <!-- ── TELA: COMPRAS ── -->
   <div id="screen-compras" class="screen">
+    <div class="back-row"><button class="btn-back" onclick="showScreen('estoque')">← Voltar</button></div>
     <div class="compras-header">
       <div class="form-title" style="margin-bottom:0">Lista de <em>compras</em></div>
       <div class="compras-summary" id="comprasSummary">0 itens selecionados</div>

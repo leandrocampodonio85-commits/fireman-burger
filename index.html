@@ -52,6 +52,20 @@ body {
   box-shadow: 0 0 16px rgba(212,28,28,0.5);
   flex-shrink: 0;
 }
+.logo-img {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 0 16px rgba(212,28,28,0.5);
+  flex-shrink: 0;
+}
+.hero-cover {
+  width: 100%; max-width: 280px;
+  border-radius: 14px;
+  border: 2px solid var(--red);
+  box-shadow: 0 0 28px var(--red-glow);
+  margin-bottom: 8px;
+}
 .logo-words { display: flex; flex-direction: column; line-height: 1.1; }
 .logo-brand {
   font-family: 'Barlow Condensed', sans-serif;
@@ -196,7 +210,7 @@ body {
 <body>
 
 <div class="hdr">
-  <div class="logo-fire">🔥</div>
+  <img src="logo.jpg" alt="Fireman Burger" class="logo-img">
   <div class="logo-words">
     <div class="logo-brand">Fireman Burger</div>
     <div class="logo-sub">· Artesanal ·</div>
@@ -205,6 +219,7 @@ body {
 </div>
 
 <div class="hero">
+  <img src="capa.jpg" alt="Fireman Burger" class="hero-cover">
   <div class="hero-label">Central de operações</div>
   <div class="hero-title">Sistema de<br><span>Gestão</span></div>
   <div class="hero-divider"></div>
