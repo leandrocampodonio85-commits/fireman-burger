@@ -279,6 +279,26 @@ body{
   transition:all .15s;white-space:nowrap;flex-shrink:0;
 }
 .btn-mov:hover{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 2px 12px rgba(212,28,28,.4)}
+.item-card{cursor:pointer}
+.item-card:active{border-color:rgba(200,144,42,.4)}
+
+/* ── MODAL EDITAR ITEM ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
+  display:none;align-items:flex-end;justify-content:center;
+}
+.modal-overlay.show{display:flex}
+.modal-box{
+  background:var(--surface2);background-image:var(--metal);
+  border-top:1px solid var(--border-mid);border-radius:12px 12px 0 0;
+  width:100%;max-width:600px;padding:20px;
+  max-height:85vh;overflow-y:auto;
+}
+.modal-title{
+  font-family:var(--font-d);font-weight:800;font-size:18px;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--text);margin-bottom:14px;
+}
+.modal-title em{color:var(--gold);font-style:normal}
 
 /* ── LOADING / EMPTY ── */
 .loading,.vazio{
@@ -640,6 +660,25 @@ body{
 
 <div class="toast" id="toast"></div>
 
+<!-- ══ MODAL EDITAR ITEM ══ -->
+<div class="modal-overlay" id="modalEdit" onclick="if(event.target===this) fecharModalEdit()">
+  <div class="modal-box">
+    <div class="modal-title" id="modalEditTitulo">Editar <em>item</em></div>
+    <div class="campo-row">
+      <div class="campo"><label>Custo unit. (R$)</label>
+        <input type="number" id="eCusto" min="0" step="0.01">
+      </div>
+      <div class="campo"><label>Estoque mínimo</label>
+        <input type="number" id="eMin" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="campo"><label>Fornecedor</label>
+      <input type="text" id="eForn" placeholder="Nome do fornecedor">
+    </div>
+    <button class="btn-primary" id="btnEdit" onclick="salvarEdicaoItem()">Salvar</button>
+  </div>
+</div>
+
 <script>
 const URL_BASE = 'https://dujpusltkduhkgbbkzku.supabase.co';
 const KEY = 'sb_publishable_cB0TPoQUWXmGB6t-hCsdiQ_Ir2U_GZA';
@@ -747,7 +786,7 @@ function render() {
     const min = parseFloat(it.estoque_minimo);
     const st = status(qtd, min);
     return `
-    <div class="item-card ${st}">
+    <div class="item-card ${st}" onclick="abrirEdicaoItem('${it.id}')">
       <div class="item-stripe"></div>
       <div class="item-body">
         <div class="item-r1">
@@ -762,12 +801,50 @@ function render() {
             <span class="cat-badge">${it.categoria || 'Outros'}</span>
             <span class="ember-dot ${STATUS_DOTS[st]}">${STATUS_LABELS[st]}</span>
             <span class="min-lbl">mín ${fmtN(min)} ${it.unidade || ''}</span>
+            ${parseFloat(it.custo_unitario) > 0 ? `<span class="min-lbl">· R$ ${parseFloat(it.custo_unitario).toFixed(2)}/${it.unidade||'un'}</span>` : `<span class="min-lbl" style="color:var(--red)">· sem custo</span>`}
           </div>
-          <button class="btn-mov" onclick="atalho('${it.id}')">↕ MOV</button>
+          <button class="btn-mov" onclick="event.stopPropagation();atalho('${it.id}')">↕ MOV</button>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+/* ── MODAL EDITAR ITEM ── */
+let editItemId = null;
+function abrirEdicaoItem(id) {
+  const it = cache.find(i => i.id === id);
+  if (!it) return;
+  editItemId = id;
+  document.getElementById('modalEditTitulo').innerHTML = `Editar <em>${it.nome}</em>`;
+  document.getElementById('eCusto').value = parseFloat(it.custo_unitario) || 0;
+  document.getElementById('eMin').value   = parseFloat(it.estoque_minimo) || 0;
+  document.getElementById('eForn').value  = it.fornecedor || '';
+  document.getElementById('modalEdit').classList.add('show');
+}
+function fecharModalEdit() {
+  document.getElementById('modalEdit').classList.remove('show');
+  editItemId = null;
+}
+async function salvarEdicaoItem() {
+  if (!editItemId) return;
+  const btn = document.getElementById('btnEdit');
+  btn.disabled = true; btn.textContent = 'Salvando…';
+  try {
+    const r = await req(`estoque?id=eq.${editItemId}`, {
+      method:'PATCH',
+      body: JSON.stringify({
+        custo_unitario: parseFloat(document.getElementById('eCusto').value) || 0,
+        estoque_minimo: parseFloat(document.getElementById('eMin').value) || 0,
+        fornecedor: document.getElementById('eForn').value.trim() || null,
+      })
+    });
+    if (!r.ok) throw new Error('status '+r.status);
+    toast('✓ Item atualizado!');
+    fecharModalEdit();
+    await load();
+  } catch (e) { toast('Erro ao salvar: '+e.message,'err'); }
+  finally { btn.disabled = false; btn.textContent = 'Salvar'; }
 }
 
 function renderAlerts() {
